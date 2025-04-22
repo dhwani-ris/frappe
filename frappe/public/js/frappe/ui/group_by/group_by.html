@@ -9,12 +9,24 @@
 			<select class="group-by form-control input-xs">
 				<option value="" disabled selected>{{ __("Select Group By...") }}</option>
 				{% for (var parent_doctype in group_by_conditions) { %}
+<<<<<<< HEAD
 					{% for (var val in group_by_conditions[parent_doctype]) { %}
 						<option
 							data-doctype="{{parent_doctype}}"
 							value="{{group_by_conditions[parent_doctype][val].fieldname}}"
 						>
 							{{ __(group_by_conditions[parent_doctype][val].label || group_by_conditions[parent_doctype][val].fieldname) }}
+=======
+					{% for (var val of group_by_conditions[parent_doctype]) { %}
+						{% field_name = val.label || val.fieldname %}
+						{% if(val.parent && doctype != val.parent) field_name += " ("+parent_doctype+")"  %}
+						<option
+							data-doctype="{{parent_doctype}}"
+							value="{{val.fieldname}}"
+							data-parent-doctype="{{doctype}}"
+						>
+							{{ __(field_name, null, val.parent ) }}
+>>>>>>> 76f95ca1a9 (fix: group by parent child issue)
 						</option>
 					{% } %}
 				{% } %}
