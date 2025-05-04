@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Framework VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-04-27 09:33+0000\n"
-"PO-Revision-Date: 2025-04-27 09:33+0000\n"
+"POT-Creation-Date: 2025-05-04 09:33+0000\n"
+"PO-Revision-Date: 2025-05-04 09:33+0000\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -884,7 +884,7 @@ msgstr ""
 msgid "Action Complete"
 msgstr ""
 
-#: frappe/model/document.py:1862
+#: frappe/model/document.py:1866
 msgid "Action Failed"
 msgstr ""
 
@@ -1086,7 +1086,7 @@ msgid "Add Gray Background"
 msgstr ""
 
 #: frappe/public/js/frappe/ui/group_by/group_by.js:230
-#: frappe/public/js/frappe/ui/group_by/group_by.js:423
+#: frappe/public/js/frappe/ui/group_by/group_by.js:427
 msgid "Add Group"
 msgstr ""
 
@@ -1584,7 +1584,7 @@ msgstr ""
 msgid "All Records"
 msgstr ""
 
-#: frappe/public/js/frappe/form/form.js:2227
+#: frappe/public/js/frappe/form/form.js:2222
 msgid "All Submissions"
 msgstr ""
 
@@ -2959,7 +2959,7 @@ msgstr ""
 msgid "Average"
 msgstr ""
 
-#: frappe/public/js/frappe/ui/group_by/group_by.js:338
+#: frappe/public/js/frappe/ui/group_by/group_by.js:342
 msgid "Average of {0}"
 msgstr ""
 
@@ -4052,7 +4052,7 @@ msgstr ""
 msgid "Cannot cancel before submitting while transitioning from <b>{0} State</b> to <b>{1} State</b>"
 msgstr ""
 
-#: frappe/workflow/doctype/workflow/workflow.py:110
+#: frappe/workflow/doctype/workflow/workflow.py:109
 msgid "Cannot cancel before submitting. See Transition {0}"
 msgstr ""
 
@@ -4072,7 +4072,7 @@ msgstr ""
 msgid "Cannot change state of Cancelled Document <b>({0} State)</b>"
 msgstr ""
 
-#: frappe/workflow/doctype/workflow/workflow.py:99
+#: frappe/workflow/doctype/workflow/workflow.py:98
 msgid "Cannot change state of Cancelled Document. Transition row {0}"
 msgstr ""
 
@@ -4225,11 +4225,11 @@ msgstr ""
 msgid "Cannot update {0}"
 msgstr ""
 
-#: frappe/model/db_query.py:1117
+#: frappe/model/db_query.py:1125
 msgid "Cannot use sub-query in order by"
 msgstr ""
 
-#: frappe/model/db_query.py:1136
+#: frappe/model/db_query.py:1144
 msgid "Cannot use {0} in order/group by"
 msgstr ""
 
@@ -5537,7 +5537,7 @@ msgstr ""
 msgid "Copy embed code"
 msgstr ""
 
-#: frappe/public/js/frappe/request.js:618
+#: frappe/public/js/frappe/request.js:620
 msgid "Copy error to clipboard"
 msgstr ""
 
@@ -5590,7 +5590,7 @@ msgstr ""
 #: frappe/desk/doctype/number_card/number_card.json
 #: frappe/desk/doctype/system_health_report_workers/system_health_report_workers.json
 #: frappe/public/js/frappe/ui/group_by/group_by.js:19
-#: frappe/public/js/frappe/ui/group_by/group_by.js:321
+#: frappe/public/js/frappe/ui/group_by/group_by.js:325
 #: frappe/workflow/doctype/workflow/workflow.js:162
 msgid "Count"
 msgstr ""
@@ -5795,7 +5795,7 @@ msgstr ""
 msgid "Created By"
 msgstr ""
 
-#: frappe/workflow/doctype/workflow/workflow.py:65
+#: frappe/workflow/doctype/workflow/workflow.py:64
 msgid "Created Custom Field {0} in {1}"
 msgstr ""
 
@@ -7862,7 +7862,7 @@ msgid "Document Types and Permissions"
 msgstr ""
 
 #: frappe/core/doctype/submission_queue/submission_queue.py:163
-#: frappe/model/document.py:1926
+#: frappe/model/document.py:1930
 msgid "Document Unlocked"
 msgstr ""
 
@@ -8076,7 +8076,7 @@ msgstr ""
 msgid "Download vCards"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:47
+#: frappe/desk/page/setup_wizard/install_fixtures.py:46
 msgid "Dr"
 msgstr ""
 
@@ -9812,7 +9812,7 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:30
+#: frappe/desk/page/setup_wizard/install_fixtures.py:29
 msgid "Female"
 msgstr ""
 
@@ -11021,7 +11021,7 @@ msgstr ""
 msgid "Gender"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:33
+#: frappe/desk/page/setup_wizard/install_fixtures.py:32
 msgid "Genderqueer"
 msgstr ""
 
@@ -11488,7 +11488,7 @@ msgstr ""
 msgid "Group your custom doctypes under modules"
 msgstr ""
 
-#: frappe/public/js/frappe/ui/group_by/group_by.js:421
+#: frappe/public/js/frappe/ui/group_by/group_by.js:425
 msgid "Grouped by <span style='font-weight:600;'>{0}</b>"
 msgstr ""
 
@@ -12385,7 +12385,7 @@ msgid "Illegal Document Status for {0}"
 msgstr ""
 
 #: frappe/model/db_query.py:451 frappe/model/db_query.py:454
-#: frappe/model/db_query.py:1120
+#: frappe/model/db_query.py:1128
 msgid "Illegal SQL Query"
 msgstr ""
 
@@ -14997,7 +14997,7 @@ msgstr ""
 msgid "MIT License"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:49
+#: frappe/desk/page/setup_wizard/install_fixtures.py:48
 msgid "Madam"
 msgstr ""
 
@@ -15068,7 +15068,7 @@ msgstr ""
 msgid "Makes the page public"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:29
+#: frappe/desk/page/setup_wizard/install_fixtures.py:28
 msgid "Male"
 msgstr ""
 
@@ -15109,7 +15109,7 @@ msgstr ""
 msgid "Mandatory Depends On (JS)"
 msgstr ""
 
-#: frappe/website/doctype/web_form/web_form.py:472
+#: frappe/website/doctype/web_form/web_form.py:474
 msgid "Mandatory Information missing:"
 msgstr ""
 
@@ -15244,7 +15244,7 @@ msgstr ""
 msgid "Marketing Manager"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:51
+#: frappe/desk/page/setup_wizard/install_fixtures.py:50
 msgid "Master"
 msgstr ""
 
@@ -15629,7 +15629,7 @@ msgstr ""
 msgid "Misconfigured"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:50
+#: frappe/desk/page/setup_wizard/install_fixtures.py:49
 msgid "Miss"
 msgstr ""
 
@@ -15969,15 +15969,15 @@ msgstr ""
 msgid "Mozilla doesn't support :has() so you can pass parent selector here as workaround"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:44
+#: frappe/desk/page/setup_wizard/install_fixtures.py:43
 msgid "Mr"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:48
+#: frappe/desk/page/setup_wizard/install_fixtures.py:47
 msgid "Mrs"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:45
+#: frappe/desk/page/setup_wizard/install_fixtures.py:44
 msgid "Ms"
 msgstr ""
 
@@ -16017,12 +16017,12 @@ msgstr ""
 msgid "Mute Sounds"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:46
+#: frappe/desk/page/setup_wizard/install_fixtures.py:45
 msgid "Mx"
 msgstr ""
 
 #: frappe/templates/includes/web_sidebar.html:41
-#: frappe/website/doctype/web_form/web_form.py:461
+#: frappe/website/doctype/web_form/web_form.py:463
 #: frappe/website/doctype/website_settings/website_settings.py:181
 #: frappe/www/list.py:21 frappe/www/me.html:8 frappe/www/update_password.py:10
 msgid "My Account"
@@ -16391,7 +16391,7 @@ msgstr ""
 #: frappe/public/js/frappe/ui/toolbar/search_utils.js:218
 #: frappe/public/js/frappe/views/treeview.js:366
 #: frappe/public/js/frappe/widgets/widget_dialog.js:72
-#: frappe/website/doctype/web_form/web_form.py:378
+#: frappe/website/doctype/web_form/web_form.py:380
 msgid "New {0}"
 msgstr ""
 
@@ -16846,7 +16846,7 @@ msgctxt "{0} = verb, {1} = object"
 msgid "No permission to '{0}' {1}"
 msgstr ""
 
-#: frappe/model/db_query.py:941
+#: frappe/model/db_query.py:949
 msgid "No permission to read {0}"
 msgstr ""
 
@@ -16926,7 +16926,7 @@ msgstr ""
 msgid "Non Negative"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:34
+#: frappe/desk/page/setup_wizard/install_fixtures.py:33
 msgid "Non-Conforming"
 msgstr ""
 
@@ -16999,7 +16999,7 @@ msgstr ""
 
 #: frappe/__init__.py:754 frappe/app.py:367 frappe/desk/calendar.py:26
 #: frappe/public/js/frappe/web_form/webform_script.js:15
-#: frappe/website/doctype/web_form/web_form.py:710
+#: frappe/website/doctype/web_form/web_form.py:712
 #: frappe/website/page_renderers/not_permitted_page.py:22
 #: frappe/www/login.py:193 frappe/www/qrcode.py:22 frappe/www/qrcode.py:25
 #: frappe/www/qrcode.py:37
@@ -17108,7 +17108,7 @@ msgstr ""
 #: frappe/public/js/frappe/request.js:170
 #: frappe/public/js/frappe/request.js:175
 #: frappe/public/js/frappe/views/kanban/kanban_board.bundle.js:67
-#: frappe/utils/messages.py:158 frappe/website/doctype/web_form/web_form.py:723
+#: frappe/utils/messages.py:158 frappe/website/doctype/web_form/web_form.py:725
 #: frappe/website/js/website.js:97
 msgid "Not permitted"
 msgstr ""
@@ -17995,7 +17995,7 @@ msgstr ""
 #: frappe/core/doctype/communication/communication.json
 #: frappe/core/doctype/doctype/doctype.json
 #: frappe/desk/doctype/event/event.json
-#: frappe/desk/page/setup_wizard/install_fixtures.py:31
+#: frappe/desk/page/setup_wizard/install_fixtures.py:30
 msgid "Other"
 msgstr ""
 
@@ -18357,7 +18357,7 @@ msgstr ""
 msgid "Parent is the name of the document to which the data will get added to."
 msgstr ""
 
-#: frappe/public/js/frappe/ui/group_by/group_by.js:247
+#: frappe/public/js/frappe/ui/group_by/group_by.js:251
 msgid "Parent-to-child or child-to-parent grouping is not allowed."
 msgstr ""
 
@@ -19119,7 +19119,7 @@ msgstr ""
 msgid "Please select applicable Doctypes"
 msgstr ""
 
-#: frappe/model/db_query.py:1132
+#: frappe/model/db_query.py:1140
 msgid "Please select atleast 1 column from {0} to sort/group"
 msgstr ""
 
@@ -19346,7 +19346,7 @@ msgstr ""
 msgid "Predictable substitutions like '@' instead of 'a' don't help very much."
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:35
+#: frappe/desk/page/setup_wizard/install_fixtures.py:34
 msgid "Prefer not to say"
 msgstr ""
 
@@ -19483,7 +19483,7 @@ msgstr ""
 msgid "Previous Hash"
 msgstr ""
 
-#: frappe/public/js/frappe/form/form.js:2219
+#: frappe/public/js/frappe/form/form.js:2214
 msgid "Previous Submission"
 msgstr ""
 
@@ -19791,7 +19791,7 @@ msgstr ""
 msgid "Processing..."
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:52
+#: frappe/desk/page/setup_wizard/install_fixtures.py:51
 msgid "Prof"
 msgstr ""
 
@@ -21112,7 +21112,7 @@ msgstr ""
 #: frappe/desk/doctype/workspace_link/workspace_link.json
 #: frappe/desk/doctype/workspace_shortcut/workspace_shortcut.json
 #: frappe/email/doctype/auto_email_report/auto_email_report.json
-#: frappe/public/js/frappe/request.js:613
+#: frappe/public/js/frappe/request.js:615
 #: frappe/public/js/frappe/utils/utils.js:920
 msgid "Report"
 msgstr ""
@@ -23275,7 +23275,7 @@ msgstr ""
 msgid "Server Action"
 msgstr ""
 
-#: frappe/app.py:383 frappe/public/js/frappe/request.js:609
+#: frappe/app.py:383 frappe/public/js/frappe/request.js:611
 #: frappe/www/error.html:36 frappe/www/error.py:15
 msgid "Server Error"
 msgstr ""
@@ -23302,8 +23302,11 @@ msgstr ""
 msgid "Server Scripts feature is not available on this site."
 msgstr ""
 
-#: frappe/public/js/frappe/request.js:246
 #: frappe/public/js/frappe/request.js:254
+msgid "Server failed to process this request because of a concurrent conflicting request. Please try again."
+msgstr ""
+
+#: frappe/public/js/frappe/request.js:246
 msgid "Server was too busy to process this request. Please try again."
 msgstr ""
 
@@ -24929,7 +24932,7 @@ msgstr ""
 msgid "Submitted"
 msgstr ""
 
-#: frappe/workflow/doctype/workflow/workflow.py:104
+#: frappe/workflow/doctype/workflow/workflow.py:103
 msgid "Submitted Document cannot be converted back to draft. Transition row {0}"
 msgstr ""
 
@@ -25078,7 +25081,7 @@ msgstr ""
 msgid "Sum"
 msgstr ""
 
-#: frappe/public/js/frappe/ui/group_by/group_by.js:333
+#: frappe/public/js/frappe/ui/group_by/group_by.js:337
 msgid "Sum of {0}"
 msgstr ""
 
@@ -26160,7 +26163,7 @@ msgstr ""
 msgid "This form has been modified after you have loaded it"
 msgstr ""
 
-#: frappe/public/js/frappe/form/form.js:2262
+#: frappe/public/js/frappe/form/form.js:2257
 msgid "This form is not editable due to a Workflow."
 msgstr ""
 
@@ -27005,7 +27008,7 @@ msgstr ""
 msgid "Transaction Log Report"
 msgstr ""
 
-#: frappe/desk/page/setup_wizard/install_fixtures.py:32
+#: frappe/desk/page/setup_wizard/install_fixtures.py:31
 msgid "Transgender"
 msgstr ""
 
@@ -29486,7 +29489,7 @@ msgstr ""
 msgid "You are not allowed to send emails related to this document"
 msgstr ""
 
-#: frappe/website/doctype/web_form/web_form.py:568
+#: frappe/website/doctype/web_form/web_form.py:570
 msgid "You are not allowed to update this Web Form Document"
 msgstr ""
 
@@ -29685,7 +29688,7 @@ msgstr ""
 msgid "You don't have access to Report: {0}"
 msgstr ""
 
-#: frappe/website/doctype/web_form/web_form.py:771
+#: frappe/website/doctype/web_form/web_form.py:773
 msgid "You don't have permission to access the {0} DocType."
 msgstr ""
 
@@ -29758,11 +29761,11 @@ msgstr ""
 msgid "You must add atleast one link."
 msgstr ""
 
-#: frappe/website/doctype/web_form/web_form.py:767
+#: frappe/website/doctype/web_form/web_form.py:769
 msgid "You must be logged in to use this form."
 msgstr ""
 
-#: frappe/website/doctype/web_form/web_form.py:608
+#: frappe/website/doctype/web_form/web_form.py:610
 msgid "You must login to submit this form"
 msgstr ""
 
@@ -30692,7 +30695,6 @@ msgstr ""
 msgid "yyyy-mm-dd"
 msgstr ""
 
-#: frappe/core/doctype/file/file.py:158 frappe/core/doctype/file/file.py:770
 #: frappe/desk/doctype/event/event.js:87
 msgid "{0}"
 msgstr ""
@@ -31154,7 +31156,7 @@ msgstr ""
 msgid "{0} months ago"
 msgstr ""
 
-#: frappe/model/document.py:1782
+#: frappe/model/document.py:1786
 msgid "{0} must be after {1}"
 msgstr ""
 
@@ -31190,7 +31192,7 @@ msgstr ""
 msgid "{0} must begin and end with a letter and can only contain letters, hyphen or underscore."
 msgstr ""
 
-#: frappe/workflow/doctype/workflow/workflow.py:91
+#: frappe/workflow/doctype/workflow/workflow.py:90
 msgid "{0} not a valid State"
 msgstr ""
 
@@ -31257,7 +31259,7 @@ msgstr ""
 msgid "{0} role does not have permission on any doctype"
 msgstr ""
 
-#: frappe/model/document.py:1775
+#: frappe/model/document.py:1779
 msgid "{0} row #{1}: "
 msgstr ""
 
