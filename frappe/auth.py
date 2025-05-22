@@ -448,7 +448,6 @@ def validate_ip_address(user):
 	):
 		return True
 
-<<<<<<< HEAD
 	from frappe.core.doctype.user.user import get_restricted_ip_list
 
 	# Only fetch required fields - for perf
@@ -467,19 +466,7 @@ def validate_ip_address(user):
 		if not frappe.flags.in_test
 		else frappe.get_single("System Settings")
 	)
-=======
-	user_info = frappe.get_cached_doc("User", user)
-	ip_list = user_info.get_restricted_ip_list()
 
-	if not ip_list:
-		return
-
-	check_request_ip()
-	for ip in ip_list:
-		if frappe.local.request_ip.startswith(ip):
-			return
-
->>>>>>> c067fd4b62 (fix: remove whitespace from restrict ip and always check request_ip (#29867))
 	# check if bypass restrict ip is enabled for all users
 	bypass_restrict_ip_check = system_settings.bypass_restrict_ip_check_if_2fa_enabled
 
@@ -488,6 +475,8 @@ def validate_ip_address(user):
 		# check if bypass restrict ip is enabled for login user
 		bypass_restrict_ip_check = user_info.bypass_restrict_ip_check_if_2fa_enabled
 
+	check_request_ip()
+	
 	for ip in ip_list:
 		if frappe.local.request_ip.startswith(ip) or bypass_restrict_ip_check:
 			return
