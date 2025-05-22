@@ -20,11 +20,7 @@ import frappe.rate_limiter
 import frappe.recorder
 import frappe.utils.response
 from frappe import _
-<<<<<<< HEAD
 from frappe.core.doctype.comment.comment import update_comments_in_parent_after_request
-=======
-from frappe.auth import SAFE_HTTP_METHODS, UNSAFE_HTTP_METHODS, HTTPRequest, check_request_ip, validate_auth
->>>>>>> c067fd4b62 (fix: remove whitespace from restrict ip and always check request_ip (#29867))
 from frappe.middlewares import StaticDataMiddleware
 from frappe.permissions import handle_does_not_exist_error
 from frappe.utils import cint, get_site_name, sanitize_html
