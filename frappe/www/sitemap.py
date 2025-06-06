@@ -42,10 +42,17 @@ def get_public_pages_from_doctypes():
 			pluck="name",
 		)
 
+<<<<<<< HEAD
 		for doctype in doctypes_with_web_view:
 			controller = get_controller(doctype)
 			meta = frappe.get_meta(doctype)
 			condition_field = meta.is_published_field or controller.website.condition_field
+=======
+	robot_parser_instance = None
+	if robots_txt := frappe.get_settings("Website Settings", "robots_txt"):
+		robot_parser_instance = robotparser.RobotFileParser()
+		robot_parser_instance.parse(robots_txt.splitlines())
+>>>>>>> caf415f13e (feat: `get_settings` (#32821))
 
 			if not condition_field:
 				continue
