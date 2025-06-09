@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: frappe\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
 "POT-Creation-Date: 2025-03-20 13:58+0000\n"
-"PO-Revision-Date: 2025-06-02 05:14\n"
+"PO-Revision-Date: 2025-06-09 07:37\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: Persian\n"
 "MIME-Version: 1.0\n"
@@ -12359,7 +12359,7 @@ msgstr "که در"
 #. 'System Settings'
 #: frappe/core/doctype/system_settings/system_settings.json
 msgid "In Days"
-msgstr "در روزهای"
+msgstr "بر حسب روز"
 
 #. Description of the Onboarding Step 'Setup Limited Access for a User'
 #: frappe/custom/onboarding_step/role_permissions/role_permissions.json
