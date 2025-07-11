@@ -251,11 +251,15 @@ def send_mobile_otp(mobile_no):
 		# Send OTP using secure utilities
 		result = send_mobile_login_otp(user_data.name, mobile_no)
 		
-		return {
-			"status": "success",
-			"message": _("OTP sent successfully"),
-			"result": result
+		# Return in standard 2FA format
+		frappe.local.response["verification"] = {
+			"method": "SMS",
+			"setup": True,
+			"prompt": _("Enter verification code sent to {0}").format(result.get("mobile_no", "******"))
 		}
+		frappe.local.response["tmp_id"] = result.get("tmp_id")
+		
+		
 		
 	except Exception as e:
 		frappe.log_error(f"Mobile OTP Error: {str(e)}")
@@ -274,12 +278,17 @@ def verify_mobile_otp(otp: str, tmp_id: str):
 	# Login user using existing login manager
 	frappe.local.login_manager.login_as(user)
 	
-	# Redirect using existing function
-	redirect_post_login(
-		desk_user=frappe.db.get_value("User", frappe.session.user, "user_type") == "System User"
-	)
+	# Set response in the format expected by frontend
+	desk_user = frappe.db.get_value("User", frappe.session.user, "user_type") == "System User"
 	
-	return {
-		"message": "Logged In",
-		"home_page": get_default_path() or "/app"
-	}
+	frappe.local.response["message"] = "Logged In"
+	frappe.local.response["home_page"] = get_default_path() or "/app"
+	
+	# Handle redirect if needed
+	redirect_to = frappe.local.request.args.get("redirect-to")
+	redirect_to = sanitize_redirect(redirect_to)
+	if redirect_to:
+		frappe.local.response["redirect_to"] = redirect_to
+
+
+

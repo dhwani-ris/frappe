@@ -153,9 +153,9 @@ def verify_mobile_login_otp(otp, tmp_id):
 	hotp = pyotp.HOTP(otp_secret)
 	if token and hotp.verify(otp, int(token)):
 		# Success - clear cache and add success attempt
-		# frappe.cache.delete(tmp_id + "_token")
-		# frappe.cache.delete(tmp_id + "_usr") 
-		# frappe.cache.delete(tmp_id + "_otp_secret")
+		frappe.cache.delete(tmp_id + "_token")
+		frappe.cache.delete(tmp_id + "_usr") 
+		frappe.cache.delete(tmp_id + "_otp_secret")
 		
 		if user_tracker:
 			user_tracker.add_success_attempt()

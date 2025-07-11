@@ -76,102 +76,26 @@ login.bind_events = function () {
 		return false;
 	});
 
-	// Mobile OTP Login - Step 1: Send OTP
 	$(".form-login-with-mobile-otp-link").on("submit", function (event) {
 		event.preventDefault();
-		
-		var mobile_no = ($("#login_with_mobile_otp_link").val() || "").trim();
-		
-		// Validate mobile number
-		if (!mobile_no) {
+		var args = {};
+		args.cmd = "frappe.www.login.send_mobile_otp";
+		args.mobile_no = ($("#login_with_mobile_otp_link").val() || "").trim();
+
+		if (!args.mobile_no) {
 			login.set_status({{ _("Mobile number is required") | tojson }}, 'red');
 			return false;
 		}
 		
-		// Basic mobile number validation (adjust regex as needed)
-		var mobileRegex = /^[+]?[\d\s\-\(\)]{10,15}$/;
-		if (!mobileRegex.test(mobile_no)) {
-			login.set_status({{ _("Please enter a valid mobile number") | tojson }}, 'red');
-			return false;
-		}
-		
-		var args = {
-			cmd: "frappe.www.login.send_mobile_otp",
-			mobile_no: mobile_no
-		};
-		
 		// Show loading state
 		login.set_status({{ _("Sending OTP...") | tojson }}, 'blue');
 		
-		login.call(args).then((response) => {
-			
-			if (response && response.message && response.message.result && response.message.result.tmp_id) {
-				// Store tmp_id for verification
-				window.mobile_otp_tmp_id = response.message.result.tmp_id;
-				
-				// Hide send OTP button and show verify OTP button
-				$("#send-otp-btn").hide();
-				$("#verify-otp-btn").show();
-				
-				// Show OTP input field and focus on it
-				$("#otp-input-group").show();
-				$("#otp_code").focus();
-				
-				// Disable mobile number input
-				$("#login_with_mobile_otp_link").prop('disabled', true);
-				
-				login.set_status({{ _("OTP sent successfully. Please enter the code.") | tojson }}, 'green');
-				
-				// Start countdown timer
-				login.startOtpTimer();
-			} else {
-				login.set_status({{ _("Failed to send OTP. Please try again.") | tojson }}, 'red');
-			}
-		}).catch((error) => {
-			console.error("Mobile OTP Error:", error);
-			login.set_status({{ _("Failed to send OTP. Please try again.") | tojson }}, 'red');
-		});
+		login.call(args);
 	
 		return false;
 	});
 	
-	// Mobile OTP Login - Step 2: Verify OTP
-	$("#verify-otp-btn").on("click", function (event) {
-		event.preventDefault();
-		
-		var otp = ($("#otp_code").val() || "").trim();
-		var tmp_id = window.mobile_otp_tmp_id;
-		
-		// Validate OTP
-		if (!otp) {
-			login.set_status({{ _("Please enter the OTP code") | tojson }}, 'red');
-			return false;
-		}
-		
-		if (otp.length !== 6 || !/^\d+$/.test(otp)) {
-			login.set_status({{ _("Please enter a valid 6-digit OTP") | tojson }}, 'red');
-			return false;
-		}
-		
-		if (!tmp_id) {
-			login.set_status({{ _("Session expired. Please try again.") | tojson }}, 'red');
-			login.resetMobileOtpForm();
-			return false;
-		}
-		
-		var args = {
-			cmd: "frappe.www.login.verify_mobile_otp",
-			otp: otp,
-			tmp_id: tmp_id
-		};
-		
-		// Show loading state
-		login.set_status({{ _("Verifying OTP...") | tojson }}, 'blue');
-		
-		login.call(args)
-	
-		return false;
-	});
+
 
 	$(".toggle-password").click(function () {
 		var input = $($(this).attr("toggle"));
@@ -221,9 +145,9 @@ login.reset_sections = function (hide) {
 			.text($(this).attr('data-text'));
 	});
 	
-	// Reset mobile OTP form state when switching sections
+	// Reset mobile OTP state when switching sections
 	if (window.mobile_otp_tmp_id) {
-		login.resetMobileOtpForm();
+		window.mobile_otp_tmp_id = null;
 	}
 }
 
@@ -385,7 +309,12 @@ login.login_handlers = (function () {
 			if (data.verification && data.message != 'Logged In') {
 				login.set_status({{ _("Success") | tojson }}, 'green');
 
-				document.cookie = "tmp_id=" + data.tmp_id;
+				// Store tmp_id for mobile OTP if present
+				if (data.tmp_id) {
+					window.mobile_otp_tmp_id = data.tmp_id;
+				} else {
+					document.cookie = "tmp_id=" + data.tmp_id;
+				}
 
 				if (data.verification.method == 'OTP App') {
 					continue_otp_app(data.verification.setup, data.verification.qrcode);
@@ -394,6 +323,11 @@ login.login_handlers = (function () {
 				} else if (data.verification.method == 'Email') {
 					continue_email(data.verification.setup, data.verification.prompt);
 				}
+			}
+			
+			// Clear mobile OTP tmp_id on successful login
+			if (data.message == 'Logged In' && window.mobile_otp_tmp_id) {
+				window.mobile_otp_tmp_id = null;
 			}
 		},
 		401: get_error_handler({{ _("Invalid Login. Try again.") | tojson }}),
@@ -421,14 +355,26 @@ var verify_token = function (event) {
 	$(".form-verify").on("submit", function (eventx) {
 		eventx.preventDefault();
 		var args = {};
-		args.cmd = "login";
-		args.otp = $("#login_token").val();
-		args.tmp_id = frappe.get_cookie('tmp_id');
-		if (!args.otp) {
+		var otp = $("#login_token").val();
+		
+		if (!otp) {
 			{# striptags is used to remove newlines, e is used for escaping #}
 			frappe.msgprint("{{ _('Login token required') | striptags | e }}");
 			return false;
 		}
+		
+		// Check if this is mobile OTP verification
+		if (window.mobile_otp_tmp_id) {
+			args.cmd = "frappe.www.login.verify_mobile_otp";
+			args.otp = otp;
+			args.tmp_id = window.mobile_otp_tmp_id;
+		} else {
+			// Standard 2FA verification
+			args.cmd = "login";
+			args.otp = otp;
+			args.tmp_id = frappe.get_cookie('tmp_id');
+		}
+		
 		login.call(args);
 		return false;
 	});
@@ -496,32 +442,6 @@ var continue_email = function (setup, prompt) {
 	}
 }
 
-// Helper functions for mobile OTP
-login.startOtpTimer = function() {
-	var timeLeft = 300; // 5 minutes
-	var timer = setInterval(function() {
-		var minutes = Math.floor(timeLeft / 60);
-		var seconds = timeLeft % 60;
-		$("#otp-timer").text("Resend OTP in " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-		
-		if (timeLeft <= 0) {
-			clearInterval(timer);
-			$("#otp-timer").html('<a href="#" onclick="login.resetMobileOtpForm(); return false;">Resend OTP</a>');
-		}
-		timeLeft--;
-	}, 1000);
-};
 
-login.resetMobileOtpForm = function() {
-	// Reset form to initial state
-	$("#send-otp-btn").show();
-	$("#verify-otp-btn").hide();
-	$("#otp-input-group").hide();
-	$("#login_with_mobile_otp_link").prop('disabled', false).val("").focus();
-	$("#otp_code").val("");
-	$("#otp-timer").text("");
-	window.mobile_otp_tmp_id = null;
-	login.set_status({{ _("Please enter your mobile number") | tojson }}, 'blue');
-};
 
 login.route();
