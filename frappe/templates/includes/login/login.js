@@ -94,8 +94,6 @@ login.bind_events = function () {
 	
 		return false;
 	});
-	
-
 
 	$(".toggle-password").click(function () {
 		var input = $($(this).attr("toggle"));

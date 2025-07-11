@@ -267,7 +267,7 @@ def send_mobile_otp(mobile_no):
 
 
 @frappe.whitelist(allow_guest=True)
-# @rate_limit(key="tmp_id", limit=3, seconds=60 * 5)  # 3 attempts per 5 minutes per session
+@rate_limit(key="tmp_id", limit=3, seconds=60 * 5)  # 3 attempts per 5 minutes per session
 def verify_mobile_otp(otp: str, tmp_id: str):
 	"""Verify OTP and login user."""
 	from frappe.utils.mobile_otp import verify_mobile_login_otp
@@ -289,6 +289,5 @@ def verify_mobile_otp(otp: str, tmp_id: str):
 	redirect_to = sanitize_redirect(redirect_to)
 	if redirect_to:
 		frappe.local.response["redirect_to"] = redirect_to
-
 
 
