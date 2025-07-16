@@ -311,7 +311,7 @@ login.login_handlers = (function () {
 				if (data.tmp_id) {
 					window.mobile_otp_tmp_id = data.tmp_id;
 				} else {
-					document.cookie = "tmp_id=" + data.tmp_id;
+				document.cookie = "tmp_id=" + data.tmp_id;
 				}
 
 				if (data.verification.method == 'OTP App') {
