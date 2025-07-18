@@ -3,7 +3,7 @@ import os
 from . import __version__ as app_version
 
 app_name = "frappe"
-app_title = "Framework"
+app_title = "Frappe Framework"
 app_publisher = "Frappe Technologies"
 app_description = "Full stack web framework with Python, Javascript, MariaDB, Redis, Node"
 app_license = "MIT"
@@ -217,6 +217,7 @@ scheduler_events = {
 	},
 	"all": [
 		"frappe.email.queue.flush",
+		"frappe.email.queue.retry_sending_emails",
 		"frappe.monitor.flush",
 		"frappe.integrations.doctype.google_calendar.google_calendar.sync",
 	],

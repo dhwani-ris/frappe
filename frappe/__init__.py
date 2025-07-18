@@ -1171,7 +1171,7 @@ def get_newargs(fn: Callable, kwargs: dict[str, Any]) -> dict[str, Any]:
 
 
 def make_property_setter(
-	args, ignore_validate=False, validate_fields_for_doctype=True, is_system_generated=True
+	args, ignore_validate=False, validate_fields_for_doctype=True, is_system_generated=True, *, module=None
 ):
 	"""Create a new **Property Setter** (for overriding DocType and DocField properties).
 
@@ -1210,6 +1210,7 @@ def make_property_setter(
 				"doctype": "Property Setter",
 				"doctype_or_field": args.doctype_or_field,
 				"doc_type": doctype,
+				"module": module,
 				"field_name": args.fieldname,
 				"row_name": args.row_name,
 				"property": args.property,
@@ -1471,16 +1472,20 @@ def logger(
 	)
 
 
-def get_desk_link(doctype, name, show_title_with_name=False):
+def get_desk_link(doctype, name, show_title_with_name=False, open_in_new_tab=False):
 	meta = get_meta(doctype)
 	title = get_value(doctype, name, meta.get_title_field())
 
-	if show_title_with_name and name != title:
-		html = '<a href="/app/Form/{doctype}/{name}" style="font-weight: bold;">{doctype_local} {name}: {title_local}</a>'
-	else:
-		html = '<a href="/app/Form/{doctype}/{name}" style="font-weight: bold;">{doctype_local} {title_local}</a>'
+	target_attr = ' target="_blank"' if open_in_new_tab else ""
 
-	return html.format(doctype=doctype, name=name, doctype_local=_(doctype), title_local=_(title))
+	if show_title_with_name and name != title:
+		html = '<a href="/app/Form/{doctype}/{name}"{target} style="font-weight: bold;">{doctype_local} {name}: {title_local}</a>'
+	else:
+		html = '<a href="/app/Form/{doctype}/{name}"{target} style="font-weight: bold;">{doctype_local} {title_local}</a>'
+
+	return html.format(
+		doctype=doctype, name=name, doctype_local=_(doctype), title_local=_(title), target=target_attr
+	)
 
 
 def get_website_settings(key):
