@@ -111,9 +111,13 @@ def send_mobile_login_otp(user, mobile_no):
 	# Cache OTP data using mobile-specific method (no password required)
 	cache_mobile_otp_data(user, token, otp_secret, tmp_id)
 	
-	# Send OTP using existing SMS function
-	status = send_token_via_sms(otp_secret, token=token, phone_no=mobile_no)
-	
+	# Hook support for custom SMS sender
+	hook_methods = frappe.get_hooks("mobile_otp_sms_sender")
+	if hook_methods:
+		status = frappe.get_attr(hook_methods[-1])(otp_secret, token=token, phone_no=mobile_no)
+	else:
+		status = send_token_via_sms(otp_secret, token=token, phone_no=mobile_no)
+
 	if not status:
 		frappe.throw(_("Failed to send OTP. Please try again."), frappe.AuthenticationError)
 	
