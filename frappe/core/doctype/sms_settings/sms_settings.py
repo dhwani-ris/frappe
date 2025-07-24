@@ -63,6 +63,10 @@ def get_contact_number(contact_name, ref_doctype, ref_name):
 
 @frappe.whitelist()
 def send_sms(receiver_list, msg, sender_name="", success_msg=True):
+	"""
+	Send SMS to a list of receivers. If a hook is defined for 'send_sms', it will be used instead of the default implementation.
+	The hook function should have the same signature as this function.
+	"""
 	import json
 
 	if isinstance(receiver_list, str):
@@ -77,6 +81,12 @@ def send_sms(receiver_list, msg, sender_name="", success_msg=True):
 		"message": frappe.safe_decode(msg).encode("utf-8"),
 		"success_msg": success_msg,
 	}
+
+	# Hook support for custom SMS sender
+	hook_methods = frappe.get_hooks("send_sms")
+	if hook_methods:
+		# Call the last registered hook
+		return frappe.get_attr(hook_methods[-1])(receiver_list, msg, sender_name, success_msg)
 
 	if frappe.db.get_single_value("SMS Settings", "sms_gateway_url"):
 		send_via_gateway(arg)
