@@ -63,10 +63,6 @@ def get_contact_number(contact_name, ref_doctype, ref_name):
 
 @frappe.whitelist()
 def send_sms(receiver_list, msg, sender_name="", success_msg=True):
-	"""
-	Send SMS to a list of receivers. If a hook is defined for 'send_sms', it will be used instead of the default implementation.
-	The hook function should have the same signature as this function.
-	"""
 	import json
 
 	if isinstance(receiver_list, str):
