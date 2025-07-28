@@ -206,22 +206,10 @@ def get_verification_obj(user, token, otp_secret):
 
 
 def process_2fa_for_sms(user, token, otp_secret):
-	"""Process sms method for 2fa.
-
-	The 'mobile_otp_sms_sender' hook allows integration with third-party SMS providers for OTP delivery.
-	When defined, this hook will be used instead of the default SMS implementation.
-	Hook functions must match the signature: send_token_via_sms(otpsecret, token=None, phone_no=None).
-	"""
+	"""Process sms method for 2fa."""
 	phone = frappe.db.get_value("User", user, ["phone", "mobile_no"], as_dict=1)
 	phone = phone.mobile_no or phone.phone
-
-	# Hook support for custom SMS sender
-	hook_methods = frappe.get_hooks("mobile_otp_sms_sender")
-	if hook_methods:
-		status = frappe.get_attr(hook_methods[-1])(otp_secret, token=token, phone_no=phone)
-	else:
-		status = send_token_via_sms(otp_secret, token=token, phone_no=phone)
-
+	status = send_token_via_sms(otp_secret, token=token, phone_no=phone)
 	return {
 		"token_delivery": status,
 		"prompt": status and "Enter verification code sent to {}".format(phone[:4] + "******" + phone[-3:]),
@@ -314,6 +302,11 @@ def get_link_for_qrcode(user, totp_uri):
 
 def send_token_via_sms(otpsecret, token=None, phone_no=None):
 	"""Send token as sms to user."""
+
+	send_token_hook_methods = frappe.get_hooks("send_token_via_sms")
+	if send_token_hook_methods:
+		return frappe.get_attr(send_token_hook_methods[-1])(otpsecret, token, phone_no)
+
 	try:
 		from frappe.core.doctype.sms_settings.sms_settings import send_request
 	except Exception:
