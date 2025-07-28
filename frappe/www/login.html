@@ -79,12 +79,56 @@
 	<section class='for-login'>
 		{{ logo_section() }}
 		<div class="login-content page-card">
-			<form class="form-signin form-login" role="form">
-				{%- if social_login or login_with_email_link -%}
+			<!-- Mobile OTP form (shown when make_mobile_login_with_otp_default is true) -->
+			<form class="form-signin form-login-with-mobile-otp-link" role="form" style="display: none;">
 				<div class="page-card-body">
-					<form class="form-signin form-login" role="form">
-						{{ email_login_body() }}
-					</form>
+					<div class="form-group">
+						<div class="email-field">
+							<input type="tel" id="login_with_mobile_otp_link" class="form-control"
+								placeholder="{{ _('Enter mobile number') }}" required autofocus>
+							<svg class="field-icon email-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+								<use class="es-lock" href="#es-line-email"></use>
+							</svg>
+						</div>
+					</div>
+
+					<div class="form-group" id="otp-input-group" style="display: none;">
+						<label class="form-label sr-only" for="otp_code">{{ _("OTP Code") }}</label>
+						<div class="password-field">
+							<input type="text" id="otp_code" class="form-control"
+								placeholder="{{ _('Enter 6-digit OTP') }}" maxlength="6" autocomplete="off">
+							<svg class="field-icon password-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+								<use class="es-lock" href="#es-line-lock"></use>
+							</svg>
+						</div>
+						<small class="text-muted" id="otp-timer"></small>
+					</div>
+				</div>
+
+				<div class="page-card-actions">
+					<button class="btn btn-sm btn-primary btn-block" id="send-otp-btn" type="submit">
+						{{ _("Send OTP") }}</button>
+					<button class="btn btn-sm btn-primary btn-block" id="verify-otp-btn" type="button" style="display: none;">
+						{{ _("Verify OTP") }}</button>
+				</div>
+				{%- if not disable_user_pass_login -%}
+				<div class="social-logins text-center">
+					<p class="text-muted login-divider">{{ _("or") }}</p>
+					<div class="social-login-buttons">
+						<div class="login-button-wrapper">
+							<a href="#login" class="btn btn-block btn-default btn-sm btn-login-option">{{ _("Login with Username/Password") }}</a>
+						</div>
+					</div>
+				</div>
+				{%- endif -%}
+			</form>
+
+			<form class="form-signin form-login" role="form">
+				{%- if social_login or login_with_email_link or allow_mobile_login_with_otp -%}
+				<div class="page-card-body">
+					{{ email_login_body() }}
 					<div class="social-logins text-center">
 						{% if not disable_user_pass_login or (ldap_settings and ldap_settings.enabled) %}
 						<p class="text-muted login-divider">{{ _("or") }}</p>
@@ -133,7 +177,7 @@
 							<div class="login-button-wrapper">
 								<a href="#login-with-mobile-otp-link"
 									class="btn btn-block btn-default btn-sm btn-login-option btn-login-with-mobile-otp-link">
-									{{ _("login with Mobile OTP") }}</a>
+									{{ _("Login with SMS OTP") }}</a>
 							</div>
 						</div>
 						{% endif %}
@@ -247,7 +291,6 @@
 		</div>
 	</section>
 
-	<!-- Mobile OTP Login Section -->
 	<section class='for-login-with-mobile-otp-link'>
 		{{ logo_section(_('Login with Mobile OTP')) }}
 		<div class="login-content page-card">
@@ -263,11 +306,11 @@
 							</svg>
 						</div>
 					</div>
-					
+
 					<div class="form-group" id="otp-input-group" style="display: none;">
 						<label class="form-label sr-only" for="otp_code">{{ _("OTP Code") }}</label>
 						<div class="password-field">
-							<input type="text" id="otp_code" class="form-control" 
+							<input type="text" id="otp_code" class="form-control"
 								placeholder="{{ _('Enter 6-digit OTP') }}" maxlength="6" autocomplete="off">
 							<svg class="field-icon password-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
@@ -277,7 +320,7 @@
 						<small class="text-muted" id="otp-timer"></small>
 					</div>
 				</div>
-				
+
 				<div class="page-card-actions">
 					<button class="btn btn-sm btn-primary btn-block" id="send-otp-btn" type="submit">
 						{{ _("Send OTP") }}</button>
@@ -290,6 +333,8 @@
 			</form>
 		</div>
 	</section>
+
+
 </div>
 {% endblock %}
 
