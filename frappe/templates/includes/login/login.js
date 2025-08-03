@@ -3,7 +3,6 @@
 
 window.disable_signup = {{ disable_signup and "true" or "false" }};
 window.show_footer_on_login = {{ show_footer_on_login and "true" or "false" }};
-window.make_mobile_login_with_otp_default = {{ make_mobile_login_with_otp_default and "true" or "false" }};
 window.allow_mobile_login_with_otp = {{ allow_mobile_login_with_otp and "true" or "false" }};
 
 window.login = {};
@@ -122,52 +121,19 @@ login.bind_events = function () {
 		return false;
 	});
 
-	// Handle switching between mobile OTP and username/password forms
-	$(document).on("click", "a[href='#login']", function(event) {
-		event.preventDefault();
-		$(".form-login-with-mobile-otp-link").hide();
-		$(".form-login").show();
-		$("#login_email").focus();
-	});
-
-	// Handle switching to mobile OTP form
+	// Handle switching to mobile OTP section
 	$(document).on("click", "a[href='#login-with-mobile-otp-link']", function(event) {
 		event.preventDefault();
-		$(".form-login").hide();
-		$(".form-login-with-mobile-otp-link").show();
-		$("#login_with_mobile_otp_link").focus();
+		window.location.hash = "#login-with-mobile-otp-link";
 	});
 
-	// Handle mobile OTP form state changes
 	login.handle_mobile_otp_response = function(data) {
 		if (data.verification && data.verification.method == 'SMS') {
-			// Show OTP input field
 			$("#otp-input-group").show();
 			$("#send-otp-btn").hide();
 			$("#verify-otp-btn").show();
 			$("#otp_code").focus();
-
-			// Start timer if provided
-			if (data.verification.timer) {
-				login.start_otp_timer(data.verification.timer);
-			}
 		}
-	};
-
-	// Start OTP timer
-	login.start_otp_timer = function(seconds) {
-		var timer = seconds;
-		var timerElement = $("#otp-timer");
-
-		var countdown = setInterval(function() {
-			timer--;
-			if (timer <= 0) {
-				clearInterval(countdown);
-				timerElement.text({{ _("OTP expired. Please request a new one.") | tojson }});
-			} else {
-				timerElement.text({{ _("Resend OTP in") | tojson }} + " " + timer + " " + {{ _("seconds") | tojson }});
-			}
-		}, 1000);
 	};
 
 	$(".toggle-password").click(function () {
@@ -227,15 +193,6 @@ login.reset_sections = function (hide) {
 login.login = function () {
 	login.reset_sections();
 	$(".for-login").toggle(true);
-
-	// Show appropriate form based on settings
-	if (window.make_mobile_login_with_otp_default && window.allow_mobile_login_with_otp) {
-		$(".form-login-with-mobile-otp-link").show();
-		$(".form-login").hide();
-	} else {
-		$(".form-login-with-mobile-otp-link").hide();
-		$(".form-login").show();
-	}
 }
 
 login.email = function () {
