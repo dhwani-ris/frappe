@@ -40,7 +40,6 @@
   "login_methods_section",
   "allow_login_using_mobile_number",
   "allow_mobile_login_with_otp",
-  "make_mobile_login_with_otp_default",
   "allow_login_using_user_name",
   "column_break_uhqk",
   "login_with_email_link",
@@ -737,20 +736,12 @@
    "fieldname": "log_api_requests",
    "fieldtype": "Check",
    "label": "Log API Requests"
-  },
-  {
-   "default": "0",
-   "depends_on": "allow_login_using_mobile_number",
-   "description": "When enabled, Displays as the primary login method.",
-   "fieldname": "make_mobile_login_with_otp_default",
-   "fieldtype": "Check",
-   "label": "Mobile OTP Login (Set as Default)"
   }
  ],
  "icon": "fa fa-cog",
  "issingle": 1,
  "links": [],
- "modified": "2025-07-28 16:56:40.894585",
+ "modified": "2025-07-29 18:20:57.694698",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "System Settings",
