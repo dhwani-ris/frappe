@@ -66,16 +66,11 @@ def generate_mobile_otp(user):
 
 def cache_mobile_otp_data(user, token, otp_secret, tmp_id):
 	"""Cache mobile OTP data without requiring password."""
-	verification_method = get_verification_method()
-
 	pipeline = frappe.cache.pipeline()
 
-	# Set increased expiry time for SMS
-	if verification_method == "SMS":
-		expiry_time = frappe.flags.token_expiry or 300
-		pipeline.set(tmp_id + "_token", token, expiry_time)
-	else:
-		expiry_time = frappe.flags.otp_expiry or 180
+	# For mobile OTP, always cache token (SMS-style verification)
+	expiry_time = frappe.flags.token_expiry or 300
+	pipeline.set(tmp_id + "_token", token, expiry_time)
 
 	# Ensure all values are strings (not bytes)
 	user = str(user) if user else ""
@@ -125,6 +120,7 @@ def verify_mobile_login_otp(otp, tmp_id):
 	user = frappe.cache.get(tmp_id + "_usr")
 	token = frappe.cache.get(tmp_id + "_token")
 	otp_secret = frappe.cache.get(tmp_id + "_otp_secret")
+	frappe.log_error(f"user: {user}, token: {token}, otp_secret: {otp_secret}")
 
 	if not user or not otp_secret:
 		frappe.throw(_("Login session expired. Please try again."), frappe.AuthenticationError)
@@ -142,9 +138,9 @@ def verify_mobile_login_otp(otp, tmp_id):
 	hotp = pyotp.HOTP(otp_secret)
 	if token and hotp.verify(otp, int(token)):
 		# Success - clear cache and add success attempt
-		frappe.cache.delete(tmp_id + "_token")
-		frappe.cache.delete(tmp_id + "_usr")
-		frappe.cache.delete(tmp_id + "_otp_secret")
+		# frappe.cache.delete(tmp_id + "_token")
+		# frappe.cache.delete(tmp_id + "_usr")
+		# frappe.cache.delete(tmp_id + "_otp_secret")
 
 		if user_tracker:
 			user_tracker.add_success_attempt()
@@ -155,9 +151,3 @@ def verify_mobile_login_otp(otp, tmp_id):
 		if user_tracker:
 			user_tracker.add_failure_attempt()
 		frappe.throw(_("Invalid OTP. Please try again."), frappe.AuthenticationError)
-
-
-def cleanup_expired_mobile_otp_sessions():
-	"""Cleanup expired mobile OTP sessions - handled by cache TTL automatically."""
-	# No need for manual cleanup as cache entries have TTL
-	pass

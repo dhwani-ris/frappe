@@ -268,21 +268,21 @@ def send_mobile_otp(mobile_no):
 		frappe.throw(_("Failed to send OTP. Please try again."))
 
 
-@frappe.whitelist(allow_guest=True)
-@rate_limit(key="tmp_id", limit=3, seconds=60 * 5)  # 3 attempts per 5 minutes per session
-def verify_mobile_otp(otp: str, tmp_id: str):
-	"""Verify OTP and login user."""
-	from frappe.utils.mobile_otp import verify_mobile_login_otp
+# @frappe.whitelist(allow_guest=True)
+# @rate_limit(key="tmp_id", limit=3, seconds=60 * 5)  # 3 attempts per 5 minutes per session
+# def verify_mobile_otp(otp: str, tmp_id: str):
+# 	"""Verify OTP and login user."""
+# 	from frappe.utils.mobile_otp import verify_mobile_login_otp
 
-	user = verify_mobile_login_otp(otp, tmp_id)
+# 	user = verify_mobile_login_otp(otp, tmp_id)
 
-	frappe.local.login_manager.login_as(user)
+# 	frappe.local.login_manager.login_as(user)
 
-	frappe.local.response["message"] = "Logged In"
-	frappe.local.response["home_page"] = get_default_path() or "/app"
+# 	frappe.local.response["message"] = "Logged In"
+# 	frappe.local.response["home_page"] = get_default_path() or "/app"
 
-	# Handle redirect if needed
-	redirect_to = frappe.local.request.args.get("redirect-to")
-	redirect_to = sanitize_redirect(redirect_to)
-	if redirect_to:
-		frappe.local.response["redirect_to"] = redirect_to
+# 	# Handle redirect if needed
+# 	redirect_to = frappe.local.request.args.get("redirect-to")
+# 	redirect_to = sanitize_redirect(redirect_to)
+# 	if redirect_to:
+# 		frappe.local.response["redirect_to"] = redirect_to
