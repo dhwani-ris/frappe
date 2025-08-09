@@ -174,18 +174,15 @@ class SystemSettings(Document):
 			)
 
 	def validate_mobile_otp_settings(self):
-		"""Validate mobile OTP login settings."""
 		if not self.allow_mobile_login_with_otp:
 			return
 
-		# Mobile login must be enabled first
 		if not self.allow_login_using_mobile_number:
 			frappe.throw(
 				_("Enable 'Allow Login using Mobile Number' first before enabling mobile OTP login.")
 			)
 
-		# Check SMS settings
-		sms_gateway_url = frappe.db.get_single_value("SMS Settings", "sms_gateway_url")
+		sms_gateway_url = frappe.get_cached_value("SMS Settings", "SMS Settings", "sms_gateway_url")
 		if not sms_gateway_url:
 			frappe.throw(
 				_(
