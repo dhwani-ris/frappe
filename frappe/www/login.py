@@ -225,19 +225,15 @@ def sanitize_redirect(redirect: str | None) -> str | None:
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(key="mobile_no", limit=5, seconds=60 * 10)  # 5 attempts per 10 minutes per mobile
-def send_mobile_otp(mobile_no):
-	"""Send OTP to mobile number for login."""
+@rate_limit(key="mobile_no", limit=5, seconds=60 * 10)
+def send_mobile_otp(mobile_no: str) -> None:
 	from frappe.utils.mobile_otp import find_user_by_mobile, send_mobile_login_otp
 
-	# Input validation and cleaning
 	if not mobile_no:
 		frappe.throw(_("Mobile number is required"))
 
-	# Convert to string and clean
 	mobile_no = str(mobile_no).strip()
 
-	# Remove any non-digit characters (optional, based on your requirements)
 	import re
 
 	mobile_no = re.sub(r"[^\d+]", "", mobile_no)
@@ -246,16 +242,13 @@ def send_mobile_otp(mobile_no):
 		frappe.throw(_("Please enter a valid mobile number"))
 
 	try:
-		# Find and validate user
 		user_data = find_user_by_mobile(mobile_no)
 
 		if not user_data:
 			frappe.throw(_("No user found with this mobile number"))
 
-		# Send OTP using secure utilities
 		result = send_mobile_login_otp(user_data.name, mobile_no)
 
-		# Return in standard 2FA format
 		frappe.local.response["verification"] = {
 			"method": "SMS",
 			"setup": True,
@@ -264,25 +257,4 @@ def send_mobile_otp(mobile_no):
 		frappe.local.response["tmp_id"] = result.get("tmp_id")
 
 	except Exception:
-		# frappe.log_error(f"Mobile OTP Error: {str(e)}")
 		frappe.throw(_("Failed to send OTP. Please try again."))
-
-
-# @frappe.whitelist(allow_guest=True)
-# @rate_limit(key="tmp_id", limit=3, seconds=60 * 5)  # 3 attempts per 5 minutes per session
-# def verify_mobile_otp(otp: str, tmp_id: str):
-# 	"""Verify OTP and login user."""
-# 	from frappe.utils.mobile_otp import verify_mobile_login_otp
-
-# 	user = verify_mobile_login_otp(otp, tmp_id)
-
-# 	frappe.local.login_manager.login_as(user)
-
-# 	frappe.local.response["message"] = "Logged In"
-# 	frappe.local.response["home_page"] = get_default_path() or "/app"
-
-# 	# Handle redirect if needed
-# 	redirect_to = frappe.local.request.args.get("redirect-to")
-# 	redirect_to = sanitize_redirect(redirect_to)
-# 	if redirect_to:
-# 		frappe.local.response["redirect_to"] = redirect_to

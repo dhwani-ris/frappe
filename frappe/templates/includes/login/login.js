@@ -96,21 +96,6 @@ login.bind_events = function () {
 		return false;
 	});
 
-	// Handle switching to mobile OTP section
-	$(document).on("click", "a[href='#login-with-mobile-otp-link']", function(event) {
-		event.preventDefault();
-		window.location.hash = "#login-with-mobile-otp-link";
-	});
-
-	login.handle_mobile_otp_response = function(data) {
-		if (data.verification && data.verification.method == 'SMS') {
-			$("#otp-input-group").show();
-			$("#send-otp-btn").hide();
-			$("#verify-otp-btn").show();
-			$("#otp_code").focus();
-		}
-	};
-
 	$(".toggle-password").click(function () {
 		var input = $($(this).attr("toggle"));
 		if (input.attr("type") == "password") {
@@ -361,13 +346,11 @@ var verify_token = function (event) {
 		args.cmd = "login";
 		args.otp = $("#login_token").val();
 		args.tmp_id = frappe.get_cookie('tmp_id');
-
 		if (!args.otp) {
 			{# striptags is used to remove newlines, e is used for escaping #}
 			frappe.msgprint("{{ _('Login token required') | striptags | e }}");
 			return false;
 		}
-
 		login.call(args);
 		return false;
 	});
