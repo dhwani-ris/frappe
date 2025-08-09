@@ -158,10 +158,9 @@ class SystemSettings(Document):
 
 		social_login_enabled = frappe.db.exists("Social Login Key", {"enable_social_login": 1})
 		ldap_enabled = frappe.db.get_single_value("LDAP Settings", "enabled")
-		login_with_email_link_enabled = frappe.db.get_single_value("System Settings", "login_with_email_link")
-		allow_mobile_login_with_otp_enabled = frappe.db.get_single_value(
-			"System Settings", "allow_mobile_login_with_otp"
-		)
+		login_with_email_link_enabled = self.login_with_email_link
+		allow_mobile_login_with_otp_enabled = self.allow_mobile_login_with_otp
+
 		if not (
 			social_login_enabled
 			or ldap_enabled
