@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 from frappe.auth import get_login_attempt_tracker
 from frappe.twofactor import get_otpsecret_for_, get_verification_method, send_token_via_sms
-from frappe.utils import cint
+from frappe.utils import cint, mask_mobile_number
 
 
 def is_mobile_otp_login_enabled() -> bool:
@@ -84,6 +84,8 @@ def send_mobile_login_otp(user: str, mobile_no: str) -> dict[str, str]:
 	if not status:
 		frappe.throw(_("Failed to send OTP. Please try again."), frappe.AuthenticationError)
 
-	masked_mobile = mobile_no[:4] + "******" + mobile_no[-3:] if len(mobile_no) > 7 else "******"
-
-	return {"message": _("OTP sent successfully"), "tmp_id": tmp_id, "mobile_no": masked_mobile}
+	return {
+		"message": _("OTP sent successfully"),
+		"tmp_id": tmp_id,
+		"mobile_no": mask_mobile_number(mobile_no),
+	}
