@@ -74,14 +74,14 @@ frappe.breadcrumbs = {
 			}
 		}
 
-		if (
-			breadcrumbs.workspace &&
-			frappe.workspace_map[breadcrumbs.workspace]?.app &&
-			frappe.workspace_map[breadcrumbs.workspace]?.app != frappe.current_app
-		) {
-			let app = frappe.workspace_map[breadcrumbs.workspace].app;
-			frappe.app.sidebar.apps_switcher.set_current_app(app);
-		}
+		// if (
+		// 	breadcrumbs.workspace &&
+		// 	frappe.workspace_map[breadcrumbs.workspace]?.app &&
+		// 	frappe.workspace_map[breadcrumbs.workspace]?.app != frappe.current_app
+		// ) {
+		// 	let app = frappe.workspace_map[breadcrumbs.workspace].app;
+		// 	frappe.app.sidebar.apps_switcher.set_current_app(app);
+		// }
 
 		this.toggle(true);
 	},
@@ -93,7 +93,7 @@ frappe.breadcrumbs = {
 	append_breadcrumb_element(route, label) {
 		const el = document.createElement("li");
 		const a = document.createElement("a");
-		a.href = route;
+		a.href = "#";
 		a.innerText = label;
 		el.appendChild(a);
 		this.$breadcrumbs.append(el);
