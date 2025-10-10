@@ -263,3 +263,125 @@ class TestSessionExpiry(FrappeAPITestCase):
 		with self.freeze_time(time_of_expiry):
 			self.assertIn(sid, get_expired_sessions())
 			self.assertFalse(s.get_session_data_from_db())
+
+
+class TestMobileOTP(IntegrationTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		cls.test_mobile = "+911234567890"
+		cls.test_user_email = "mobile_otp_test@example.com"
+		cls.test_user_password = "pwd_012"
+
+		# Create test user with mobile number
+		add_user(
+			email=cls.test_user_email,
+			password=cls.test_user_password,
+			mobile_no=cls.test_mobile,
+		)
+
+	@classmethod
+	def tearDownClass(cls):
+		frappe.db.rollback()
+		frappe.delete_doc("User", cls.test_user_email, force=True)
+		frappe.db.commit()
+
+	def setUp(self):
+		super().setUp()
+		# Enable mobile OTP login
+		frappe.db.set_single_value("System Settings", "allow_login_using_mobile_number", 1)
+		frappe.db.set_single_value("System Settings", "allow_mobile_login_with_otp", 1)
+		frappe.db.commit()
+
+	def tearDown(self):
+		# Reset settings
+		frappe.db.set_single_value("System Settings", "allow_login_using_mobile_number", 0)
+		frappe.db.set_single_value("System Settings", "allow_mobile_login_with_otp", 0)
+		frappe.db.commit()
+
+	def test_send_mobile_otp_success(self):
+		"""Test successful OTP sending"""
+		from unittest.mock import patch
+
+		with (
+			patch("frappe.utils.mobile_otp.find_user_by_mobile") as mock_find_user,
+			patch("frappe.utils.mobile_otp.send_mobile_login_otp") as mock_send_otp,
+		):
+			mock_find_user.return_value = {"name": self.test_user_email, "mobile_no": self.test_mobile}
+			mock_send_otp.return_value = {"tmp_id": "test_tmp_id", "mobile_no": "******7890"}
+
+			frappe.call("frappe.www.login.send_mobile_otp", mobile_no=self.test_mobile)
+
+			mock_find_user.assert_called_once_with(self.test_mobile)
+			mock_send_otp.assert_called_once_with(self.test_user_email, self.test_mobile)
+
+			# Verify response structure
+			self.assertEqual(frappe.local.response["verification"]["method"], "SMS")
+			self.assertTrue(frappe.local.response["verification"]["setup"])
+			self.assertIn("******7890", frappe.local.response["verification"]["prompt"])
+			self.assertEqual(frappe.local.response["tmp_id"], "test_tmp_id")
+
+	def test_send_mobile_otp_empty_mobile(self):
+		"""Test error when mobile number is empty"""
+		with self.assertRaises(frappe.ValidationError) as context:
+			frappe.call("frappe.www.login.send_mobile_otp", mobile_no="")
+
+		self.assertIn("Mobile number is required", str(context.exception))
+
+	def test_send_mobile_otp_none_mobile(self):
+		"""Test error when mobile number is None"""
+		with self.assertRaises(frappe.ValidationError) as context:
+			frappe.call("frappe.www.login.send_mobile_otp", mobile_no=None)
+
+		self.assertIn("Mobile number is required", str(context.exception))
+
+	def test_send_mobile_otp_invalid_mobile(self):
+		"""Test error when mobile number is invalid"""
+		invalid_mobiles = ["123", "abc", "123456789", "+12345678901234567890"]
+
+		for invalid_mobile in invalid_mobiles:
+			with self.assertRaises(frappe.InvalidPhoneNumberError):
+				frappe.call("frappe.www.login.send_mobile_otp", mobile_no=invalid_mobile)
+
+	def test_send_mobile_otp_user_not_found(self):
+		"""Test error when no user found with mobile number"""
+		from unittest.mock import patch
+
+		with patch("frappe.utils.mobile_otp.find_user_by_mobile") as mock_find_user:
+			mock_find_user.return_value = None
+
+			with self.assertRaises(frappe.ValidationError) as context:
+				frappe.call("frappe.www.login.send_mobile_otp", mobile_no="+919876543210")
+
+			self.assertIn("No user found with this mobile number", str(context.exception))
+
+	def test_send_mobile_otp_send_failure(self):
+		"""Test error when OTP sending fails"""
+		from unittest.mock import patch
+
+		with (
+			patch("frappe.utils.mobile_otp.find_user_by_mobile") as mock_find_user,
+			patch("frappe.utils.mobile_otp.send_mobile_login_otp") as mock_send_otp,
+		):
+			mock_find_user.return_value = {"name": self.test_user_email, "mobile_no": self.test_mobile}
+			mock_send_otp.side_effect = Exception("SMS service down")
+
+			with self.assertRaises(frappe.ValidationError) as context:
+				frappe.call("frappe.www.login.send_mobile_otp", mobile_no=self.test_mobile)
+
+			self.assertIn("Failed to send OTP. Please try again.", str(context.exception))
+
+	def test_send_mobile_otp_disabled_mobile_login(self):
+		"""Test error when mobile login is disabled"""
+		frappe.db.set_single_value("System Settings", "allow_login_using_mobile_number", 0)
+		frappe.db.commit()
+
+		from unittest.mock import patch
+
+		with patch("frappe.utils.mobile_otp.find_user_by_mobile") as mock_find_user:
+			mock_find_user.side_effect = frappe.AuthenticationError("Mobile login disabled")
+
+			with self.assertRaises(frappe.ValidationError) as context:
+				frappe.call("frappe.www.login.send_mobile_otp", mobile_no=self.test_mobile)
+
+			self.assertIn("Failed to send OTP. Please try again.", str(context.exception))
