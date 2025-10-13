@@ -29,7 +29,7 @@ from frappe.model.utils import is_virtual_doctype, simple_singledispatch
 from frappe.model.workflow import set_workflow_state_on_action, validate_workflow
 from frappe.types import DF
 from frappe.types.filter import FilterSignature
-from frappe.utils import compare, cstr, date_diff, file_lock, flt, get_table_name, now
+from frappe.utils import compare, cstr, date_diff, file_lock, flt, get_table_name, now, strip
 from frappe.utils.data import get_absolute_url, get_datetime, get_timedelta, getdate
 from frappe.utils.global_search import update_global_search
 
@@ -978,6 +978,21 @@ class Document(BaseDocument):
 				for d in value:
 					if d.is_new():
 						d.update_if_missing(new_doc)
+
+		self._trim_text_fields()
+	
+	def _trim_text_fields(self):
+		"""Auto-trim leading/trailing whitespace from text fields using Frappe utilities"""		
+
+		text_fieldtypes = ["Data", "Text", "Small Text", "Long Text"]
+		text_fields = self.meta.get("fields", {"fieldtype": ("in", text_fieldtypes)})
+		
+		for field in text_fields:
+			value = self.get(field.fieldname)
+			if isinstance(value, str):
+				trimmed_value = strip(value)
+				if trimmed_value != value:
+					self.set(field.fieldname, trimmed_value)
 
 	def check_if_latest(self):
 		"""Checks if `modified` timestamp provided by document being updated is same as the
