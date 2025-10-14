@@ -980,13 +980,13 @@ class Document(BaseDocument):
 						d.update_if_missing(new_doc)
 
 		self._trim_text_fields()
-	
+
 	def _trim_text_fields(self):
-		"""Auto-trim leading/trailing whitespace from text fields using Frappe utilities"""		
+		"""Auto-trim leading/trailing whitespace from text fields using Frappe utilities"""
 
 		text_fieldtypes = ["Data", "Text", "Small Text", "Long Text"]
 		text_fields = self.meta.get("fields", {"fieldtype": ("in", text_fieldtypes)})
-		
+
 		for field in text_fields:
 			value = self.get(field.fieldname)
 			if isinstance(value, str):
