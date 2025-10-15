@@ -158,8 +158,10 @@ def confirm_otp_token(login_manager, otp=None, tmp_id=None):
 		return True
 	if not tmp_id:
 		tmp_id = frappe.form_dict.get("tmp_id")
+
 	hotp_token = frappe.cache.get(tmp_id + "_token")
 	otp_secret = frappe.cache.get(tmp_id + "_otp_secret")
+
 	if not otp_secret:
 		raise ExpiredLoginException(_("Login session expired, refresh page to retry"))
 
@@ -206,10 +208,22 @@ def get_verification_obj(user, token, otp_secret):
 
 
 def process_2fa_for_sms(user, token, otp_secret):
-	"""Process sms method for 2fa."""
+	"""Process sms method for 2fa.
+
+	The 'mobile_otp_sms_sender' hook allows integration with third-party SMS providers for OTP delivery.
+	When defined, this hook will be used instead of the default SMS implementation.
+	Hook functions must match the signature: send_token_via_sms(otpsecret, token=None, phone_no=None).
+	"""
 	phone = frappe.db.get_value("User", user, ["phone", "mobile_no"], as_dict=1)
 	phone = phone.mobile_no or phone.phone
-	status = send_token_via_sms(otp_secret, token=token, phone_no=phone)
+
+	# Hook support for custom SMS sender
+	hook_methods = frappe.get_hooks("mobile_otp_sms_sender")
+	if hook_methods:
+		status = frappe.get_attr(hook_methods[-1])(otp_secret, token=token, phone_no=phone)
+	else:
+		status = send_token_via_sms(otp_secret, token=token, phone_no=phone)
+
 	return {
 		"token_delivery": status,
 		"prompt": status and "Enter verification code sent to {}".format(phone[:4] + "******" + phone[-3:]),

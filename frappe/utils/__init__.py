@@ -1242,3 +1242,21 @@ if sys.version_info.minor < 12:
 			instance.__dict__[self.attrname] = value
 			return value
 # end: custom cached_property implementation
+
+
+def mask_string(input_string: str, mask_char: str = "*", show_first: int = 4, show_last: int = 3) -> str:
+	if not input_string:
+		return mask_char * 6
+
+	string = str(input_string).strip()
+	min_length = show_first + show_last + 1
+
+	if len(string) < min_length:
+		return mask_char * 6
+
+	mask_length = len(input_string) - show_first - show_last
+	first_part = input_string[:show_first]
+	last_part = input_string[-show_last:] if show_last > 0 else ""
+	masked_part = mask_char * max(mask_length, 3)
+
+	return first_part + masked_part + last_part
