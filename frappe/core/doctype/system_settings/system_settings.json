@@ -41,6 +41,7 @@
   "max_signups_allowed_per_hour",
   "login_methods_section",
   "allow_login_using_mobile_number",
+  "allow_mobile_login_with_otp",
   "allow_login_using_user_name",
   "column_break_uhqk",
   "login_with_email_link",
@@ -254,6 +255,14 @@
    "fieldname": "allow_login_using_mobile_number",
    "fieldtype": "Check",
    "label": "Allow Login using Mobile Number"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.allow_login_using_mobile_number == 1",
+   "description": "When enabled, users can login with mobile number using OTP instead of password. Requires SMS Settings to be configured.",
+   "fieldname": "allow_mobile_login_with_otp",
+   "fieldtype": "Check",
+   "label": "Allow Mobile Login with OTP"
   },
   {
    "default": "0",
@@ -752,12 +761,20 @@
    "fieldtype": "Select",
    "label": "Show External Link Warning",
    "options": "Never\nAsk\nAlways"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.allow_login_using_mobile_number == 1",
+   "description": "When enabled, users can login with mobile number using OTP instead of password. Requires SMS Settings to be configured.",
+   "fieldname": "allow_mobile_login_with_otp",
+   "fieldtype": "Check",
+   "label": "Allow Mobile Login with OTP"
   }
  ],
  "icon": "fa fa-cog",
  "issingle": 1,
  "links": [],
- "modified": "2025-09-24 16:04:02.016562",
+ "modified": "2025-10-15 19:53:11.127292",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "System Settings",

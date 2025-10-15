@@ -23,6 +23,7 @@ class SystemSettings(Document):
 		allow_guests_to_upload_files: DF.Check
 		allow_login_after_fail: DF.Int
 		allow_login_using_mobile_number: DF.Check
+		allow_mobile_login_with_otp: DF.Check
 		allow_login_using_user_name: DF.Check
 		allow_older_web_view_links: DF.Check
 		allowed_file_extensions: DF.SmallText | None
@@ -143,6 +144,7 @@ class SystemSettings(Document):
 			frappe.flags.update_last_reset_password_date = True
 
 		self.validate_user_pass_login()
+		self.validate_mobile_otp_settings()
 		self.validate_backup_limit()
 		self.validate_file_extensions()
 
@@ -162,13 +164,33 @@ class SystemSettings(Document):
 
 		social_login_enabled = frappe.db.exists("Social Login Key", {"enable_social_login": 1})
 		ldap_enabled = frappe.db.get_single_value("LDAP Settings", "enabled")
+		login_with_email_link_enabled = self.login_with_email_link
+		allow_mobile_login_with_otp_enabled = self.allow_mobile_login_with_otp
 
-		if not (social_login_enabled or ldap_enabled or self.login_with_email_link):
+		if not (
+			social_login_enabled
+			or ldap_enabled
+			or login_with_email_link_enabled
+			or allow_mobile_login_with_otp_enabled
+		):
 			frappe.throw(
 				_(
-					"Please enable atleast one Social Login Key or LDAP or Login With Email Link before disabling username/password based login."
+					"Please enable atleast one Social Login Key or LDAP or Login With Email Link or Login with Mobile OTP before disabling username/password based login."
 				)
 			)
+
+	def validate_mobile_otp_settings(self):
+		if not self.allow_mobile_login_with_otp:
+			return
+
+		if not self.allow_login_using_mobile_number:
+			frappe.throw(
+				_("Enable 'Allow Login using Mobile Number' first before enabling mobile OTP login.")
+			)
+
+		sms_gateway_url = frappe.get_cached_value("SMS Settings", "SMS Settings", "sms_gateway_url")
+		if not sms_gateway_url:
+			frappe.throw(_("Please configure SMS Settings before enabling mobile OTP login."))
 
 	def validate_backup_limit(self):
 		if not self.backup_limit or self.backup_limit < 1:
