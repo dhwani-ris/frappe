@@ -11,7 +11,7 @@ from frappe.apps import get_default_path
 from frappe.auth import LoginManager
 from frappe.core.doctype.navbar_settings.navbar_settings import get_app_logo
 from frappe.rate_limiter import rate_limit
-from frappe.utils import cint, get_url
+from frappe.utils import cint, get_url, validate_phone_number
 from frappe.utils.data import escape_html
 from frappe.utils.html_utils import get_icon_html
 from frappe.utils.jinja import guess_is_path
@@ -112,6 +112,7 @@ def get_context(context):
 	context["login_label"] = f" {_('or')} ".join(login_label)
 
 	context["login_with_email_link"] = frappe.get_system_settings("login_with_email_link")
+	context["allow_mobile_login_with_otp"] = cint(frappe.get_system_settings("allow_mobile_login_with_otp"))
 	context["login_with_frappe_cloud_url"] = (
 		f"{get_site_login_url()}?site={frappe.local.site}"
 		if on_frappecloud() and frappe.conf.get("fc_communication_secret")
@@ -220,3 +221,32 @@ def sanitize_redirect(redirect: str | None) -> str | None:
 			output_parsed_url = output_parsed_url._replace(path=parsed_redirect.path)
 
 	return output_parsed_url.geturl()
+
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(key="mobile_no", limit=50, seconds=60 * 10)
+def send_mobile_otp(mobile_no: str) -> None:
+	from frappe.utils.mobile_otp import find_user_by_mobile, send_mobile_login_otp
+
+	if not mobile_no:
+		frappe.throw(_("Mobile number is required"))
+
+	validate_phone_number(mobile_no, throw=True)
+
+	try:
+		user_data = find_user_by_mobile(mobile_no)
+
+		if not user_data:
+			frappe.throw(_("No user found with this mobile number"))
+
+		result = send_mobile_login_otp(user_data.name, mobile_no)
+
+		frappe.local.response["verification"] = {
+			"method": "SMS",
+			"setup": True,
+			"prompt": _("Enter verification code sent to {0}").format(result.get("mobile_no", "******")),
+		}
+		frappe.local.response["tmp_id"] = result.get("tmp_id")
+
+	except Exception:
+		frappe.throw(_("Failed to send OTP. Please try again."))

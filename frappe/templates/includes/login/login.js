@@ -3,7 +3,7 @@
 
 window.disable_signup = {{ disable_signup and "true" or "false" }};
 window.show_footer_on_login = {{ show_footer_on_login and "true" or "false" }};
-
+window.allow_mobile_login_with_otp = {{ allow_mobile_login_with_otp and "true" or "false" }};
 window.login = {};
 
 window.verify = {};
@@ -75,6 +75,25 @@ login.bind_events = function () {
 		return false;
 	});
 
+	$(".form-login-with-mobile-otp-link").on("submit", function (event) {
+		event.preventDefault();
+		var args = {};
+		args.cmd = "frappe.www.login.send_mobile_otp";
+		args.mobile_no = ($("#login_with_mobile_otp_link").val() || "").trim();
+
+		if (!args.mobile_no) {
+			login.set_status({{ _("Mobile number is required") | tojson }}, 'red');
+			return false;
+		}
+
+		// Show loading state
+		login.set_status({{ _("Sending OTP...") | tojson }}, 'blue');
+
+		login.call(args);
+
+		return false;
+	});
+
 	$(".toggle-password").click(function () {
 		var input = $($(this).attr("toggle"));
 		if (input.attr("type") == "password") {
@@ -117,6 +136,7 @@ login.reset_sections = function (hide) {
 		$("section.for-forgot").toggle(false);
 		$("section.for-login-with-email-link").toggle(false);
 		$("section.for-signup").toggle(false);
+		$("section.for-login-with-mobile-otp-link").toggle(false);
 	}
 	$('section:not(.signup-disabled) .indicator').each(function () {
 		$(this).removeClass().addClass('indicator').addClass('blue')
@@ -157,6 +177,12 @@ login.login_with_email_link = function () {
 	}
 	$(".for-login-with-email-link").toggle(true);
 	$("#login_with_email_link_email").focus();
+}
+
+login.login_with_mobile_otp_link = function () {
+	login.reset_sections();
+	$(".for-login-with-mobile-otp-link").toggle(true);
+	$("#login_with_mobile_otp_link").focus();
 }
 
 login.signup = function () {
@@ -303,7 +329,7 @@ frappe.ready(function () {
 		$("body .web-footer").show();
 	}
 
-	$(".form-signup, .form-forgot, .form-login-with-email-link").removeClass("hide");
+	$(".form-signup, .form-forgot, .form-login-with-email-link, .form-login-with-mobile-otp-link, .form-login").removeClass("hide");
 	$(document).trigger('login_rendered');
 });
 
@@ -360,7 +386,7 @@ var continue_otp_app = function (setup, qrcode) {
 
 var continue_sms = function (setup, prompt) {
 	request_otp();
-	var sms_div = $('<div class="text-muted" style="padding-bottom: 15px;"></div>');
+	var sms_div = $('<div class="text-muted" style="padding: 15px 0 15px; line-height: 1.2; font-size: 15px;"></div>');
 
 	if (setup) {
 		sms_div.append(prompt)
