@@ -224,8 +224,8 @@ def sanitize_redirect(redirect: str | None) -> str | None:
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(key="mobile_no", limit=50, seconds=60 * 10)
-def send_mobile_otp(mobile_no: str) -> None:
+@rate_limit(key="mobile_no", limit=5, seconds=60 * 10)
+def send_mobile_otp(mobile_no: str | None) -> None:
 	from frappe.utils.mobile_otp import find_user_by_mobile, send_mobile_login_otp
 
 	if not mobile_no:
