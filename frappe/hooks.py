@@ -35,6 +35,7 @@ app_include_css = [
 	"report.bundle.css",
 ]
 app_include_icons = [
+	"/assets/frappe/icons/octicons/icons.svg",
 	"/assets/frappe/icons/timeless/icons.svg",
 	"/assets/frappe/icons/espresso/icons.svg",
 ]
@@ -47,6 +48,7 @@ doctype_js = {
 web_include_js = ["website_script.js"]
 web_include_css = []
 web_include_icons = [
+	"/assets/frappe/icons/octicons/icons.svg",
 	"/assets/frappe/icons/timeless/icons.svg",
 	"/assets/frappe/icons/espresso/icons.svg",
 ]
