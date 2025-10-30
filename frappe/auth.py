@@ -299,6 +299,7 @@ class LoginManager:
 	def _authenticate_mobile_otp(self, otp: str, tmp_id: str):
 		from frappe.twofactor import confirm_otp_token
 
+		# nosemgrep - Cannot use frappe.cache.get_value here as it will not work. This needs to be changed in the core functionality.
 		cached_user = frappe.cache.get(tmp_id + "_usr")
 		if not cached_user:
 			self.fail(_("Login session expired. Please try again."))
