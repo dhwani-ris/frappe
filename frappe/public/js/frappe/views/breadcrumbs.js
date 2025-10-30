@@ -75,6 +75,7 @@ frappe.breadcrumbs = {
 		}
 
 		if (
+			!frappe.boot?.sysdefaults?.default_app &&
 			breadcrumbs.workspace &&
 			frappe.workspace_map[breadcrumbs.workspace]?.app &&
 			frappe.workspace_map[breadcrumbs.workspace]?.app != frappe.current_app

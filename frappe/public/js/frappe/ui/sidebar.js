@@ -50,6 +50,7 @@ frappe.ui.Sidebar = class Sidebar {
 		});
 		this.apps_switcher = new frappe.ui.AppsSwitcher(this);
 		this.apps_switcher.create_app_data_map();
+		this.apps_switcher.set_current_app(frappe.current_app);
 	}
 
 	set_hover() {
@@ -73,8 +74,20 @@ frappe.ui.Sidebar = class Sidebar {
 	set_default_app() {
 		// sort apps based on # of workspaces
 		frappe.boot.app_data.sort((a, b) => (a.workspaces.length < b.workspaces.length ? 1 : -1));
-		frappe.current_app = frappe.boot.app_data[0].app_name;
-		frappe.frappe_toolbar.set_app_logo(frappe.boot.app_data[0].app_logo_url);
+		const default_app = frappe.boot?.sysdefaults?.default_app;
+		let app_entry = frappe.boot.app_data[0];
+		if (default_app) {
+			// ensure map exists
+			if (!frappe.boot.app_data_map) {
+				frappe.boot.app_data_map = {};
+				for (const app of frappe.boot.app_data) {
+					frappe.boot.app_data_map[app.app_name] = app;
+				}
+			}
+			app_entry = frappe.boot.app_data_map[default_app] || app_entry;
+		}
+		frappe.current_app = app_entry.app_name;
+		frappe.frappe_toolbar.set_app_logo(app_entry.app_logo_url);
 	}
 
 	set_active_workspace_item() {

@@ -236,7 +236,9 @@ frappe.views.Workspace = class Workspace {
 			$(".item-anchor").removeClass("disable-click");
 
 			this.remove_page_skeleton();
-			frappe.app.sidebar.apps_switcher.set_current_app(app);
+			if (!frappe.boot?.sysdefaults?.default_app) {
+				frappe.app.sidebar.apps_switcher.set_current_app(app);
+			}
 			this.wrapper.find(".workspace-title").html(__(this._page.title));
 			this.wrapper
 				.find(".workspace-icon")
