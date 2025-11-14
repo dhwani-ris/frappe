@@ -1254,9 +1254,9 @@ def mask_string(input_string: str, mask_char: str = "*", show_first: int = 4, sh
 	if len(string) < min_length:
 		return mask_char * 6
 
-	mask_length = len(input_string) - show_first - show_last
-	first_part = input_string[:show_first]
-	last_part = input_string[-show_last:] if show_last > 0 else ""
+	mask_length = len(string) - show_first - show_last
+	first_part = string[:show_first]
+	last_part = string[-show_last:] if show_last > 0 else ""
 	masked_part = mask_char * max(mask_length, 3)
 
 	return first_part + masked_part + last_part
