@@ -57,7 +57,8 @@ body {
 
 			input[type="text"],
 			input[type="email"],
-			input[type="password"] {
+			input[type="password"],
+			input[type="tel"] {
 				border: none;
 				color: var(--text-color);
 				@include get_textstyle("base", "regular");
@@ -68,7 +69,8 @@ body {
 			&.invalid {
 				input[type="text"],
 				input[type="email"],
-				input[type="password"] {
+				input[type="password"],
+				input[type="tel"] {
 					border: 1px solid var(--red-500);
 				}
 			}
@@ -97,7 +99,8 @@ body {
 			}
 
 			.email-field,
-			.password-field {
+			.password-field,
+			.mobile-field {
 				position: relative;
 
 				input {

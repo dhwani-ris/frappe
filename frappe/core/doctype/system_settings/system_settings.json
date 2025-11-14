@@ -766,16 +766,6 @@
    "options": "Never\nAsk\nAlways"
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.allow_login_using_mobile_number == 1",
-   "description": "When enabled, users can login with mobile number using OTP instead of password. Requires SMS Settings to be configured.",
-   "fieldname": "allow_mobile_login_with_otp",
-   "fieldtype": "Check",
-   "label": "Allow Mobile Login with OTP"
-   "fieldname": "column_break_odhl",
-   "fieldtype": "Column Break"
-  },
-  {
    "depends_on": "eval:doc.enable_two_factor_auth==1 && doc.two_factor_method==\"SMS\"",
    "description": "OTP placeholder should be defined as <code>{{ otp }}</code> ",
    "fieldname": "otp_sms_template",

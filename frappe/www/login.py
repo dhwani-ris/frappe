@@ -233,20 +233,12 @@ def send_mobile_otp(mobile_no: str | None) -> None:
 
 	validate_phone_number(mobile_no, throw=True)
 
-	try:
-		user_data = find_user_by_mobile(mobile_no)
+	user_data = find_user_by_mobile(mobile_no)
+	result = send_mobile_login_otp(user_data.name, mobile_no)
 
-		if not user_data:
-			frappe.throw(_("No user found with this mobile number"))
-
-		result = send_mobile_login_otp(user_data.name, mobile_no)
-
-		frappe.local.response["verification"] = {
-			"method": "SMS",
-			"setup": True,
-			"prompt": _("Enter verification code sent to {0}").format(result.get("mobile_no", "******")),
-		}
-		frappe.local.response["tmp_id"] = result.get("tmp_id")
-
-	except Exception:
-		frappe.throw(_("Failed to send OTP. Please try again."))
+	frappe.local.response["verification"] = {
+		"method": "SMS",
+		"setup": True,
+		"prompt": _("Enter verification code sent to {0}").format(result.get("mobile_no", "******")),
+	}
+	frappe.local.response["tmp_id"] = result.get("tmp_id")
