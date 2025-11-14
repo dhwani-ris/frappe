@@ -332,7 +332,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		this.list_view_settings = list_view_settings;
 
 		this.setup_columns();
-		this.refresh(true);
+		this.refresh();
 	}
 
 	refresh(refresh_header = false) {
@@ -804,11 +804,9 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			}
 
 			if (frappe.is_mobile() && col.type == "Field" && [3, 4].includes(i)) {
-				left_html += `<div class="mobile-layout">${this.get_column_html(
-					col,
-					doc,
-					true
-				)}</div>`;
+				left_html += `<div class="mobile-layout ${
+					i == 3 ? "mobile-layout-seperator" : ""
+				}">${this.get_column_html(col, doc, true)}</div>`;
 			} else {
 				left_html += this.get_column_html(col, doc, false);
 			}
@@ -999,7 +997,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		 * If the length of the text is not available, it defaults to a length of 22.5.
 		 */
 		let textLength = $(column_html).text()?.trim()?.length || 22.5;
-		let calculatedWidth = (textLength * 10) / 1.3;
+		let calculatedWidth = (textLength * 10) / 1.3 + (col.type == "Subject" ? 30 : 0);
 
 		/**
 		 * Updates the `column_max_widths` object by setting the maximum width for a specific column (fieldname).
