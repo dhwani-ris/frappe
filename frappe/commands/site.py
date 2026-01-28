@@ -1328,19 +1328,18 @@ def clear_log_table(context: CliCtxObj, doctype, days, no_backup):
 
 	ref: https://mariadb.com/kb/en/big-deletes/#deleting-more-than-half-a-table
 	"""
-	from frappe.core.doctype.log_settings.log_settings import LOG_DOCTYPES
 	from frappe.core.doctype.log_settings.log_settings import clear_log_table as clear_logs
 	from frappe.utils.backups import scheduled_backup
 
 	if not context.sites:
 		raise SiteNotSpecifiedError
 
-	if doctype not in LOG_DOCTYPES:
-		raise frappe.ValidationError(f"Unsupported logging DocType: {doctype}")
-
 	for site in context.sites:
 		frappe.init(site)
 		frappe.connect()
+
+		if doctype not in frappe.get_hooks("default_log_clearing_doctypes", {}):
+			raise frappe.ValidationError(f"Unsupported logging DocType: {doctype}")
 
 		if not no_backup:
 			scheduled_backup(
@@ -1584,6 +1583,36 @@ def bypass_patch(context: CliCtxObj, patch_name: str, yes: bool):
 			frappe.destroy()
 
 
+@click.command("sync-desktop-icons")
+@pass_context
+def sync_desktop_icons(context: CliCtxObj):
+	from frappe.model.sync import import_file_by_path
+	from frappe.modules.utils import get_app_level_directory_path
+	from frappe.utils import update_progress_bar
+
+	files = []
+	app_level_folders = ["desktop_icon"]
+	for site in context.sites:
+		print("Sycning icons for " + site)
+		frappe.init(site)
+		frappe.connect()
+		for app_name in frappe.get_installed_apps():
+			for folder_name in app_level_folders:
+				directory_path = get_app_level_directory_path(folder_name, app_name)
+				if os.path.exists(directory_path):
+					icon_files = [
+						os.path.join(directory_path, filename) for filename in os.listdir(directory_path)
+					]
+					for doc_path in icon_files:
+						files.append(doc_path)
+		for i, doc_path in enumerate(files):
+			imported = import_file_by_path(doc_path, force=True, ignore_version=True)
+			if imported:
+				frappe.db.commit(chain=True)
+
+			update_progress_bar("Updating Desktop Icons", i, len(files))
+
+
 commands = [
 	add_system_manager,
 	add_user_for_sites,
@@ -1620,4 +1649,5 @@ commands = [
 	trim_database,
 	clear_log_table,
 	bypass_patch,
+	sync_desktop_icons,
 ]

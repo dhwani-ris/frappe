@@ -25,7 +25,6 @@ class SystemSettings(Document):
 		allow_login_using_mobile_number: DF.Check
 		allow_mobile_login_with_otp: DF.Check
 		allow_login_using_user_name: DF.Check
-		allow_older_web_view_links: DF.Check
 		allowed_file_extensions: DF.SmallText | None
 		app_name: DF.Data | None
 		apply_strict_user_permissions: DF.Check
@@ -44,6 +43,7 @@ class SystemSettings(Document):
 		deny_multiple_sessions: DF.Check
 		disable_change_log_notification: DF.Check
 		disable_document_sharing: DF.Check
+		disable_product_suggestion: DF.Check
 		disable_standard_email_footer: DF.Check
 		disable_system_update_notification: DF.Check
 		disable_user_pass_login: DF.Check
@@ -89,6 +89,7 @@ class SystemSettings(Document):
 			"#.###",
 			"#,###",
 		]
+		only_allow_system_managers_to_upload_public_files: DF.Check
 		otp_issuer_name: DF.Data | None
 		otp_sms_template: DF.SmallText | None
 		password_reset_limit: DF.Int
