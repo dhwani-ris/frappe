@@ -40,8 +40,7 @@ def find_user_by_mobile(mobile_no: str) -> dict[str, str]:
 	)
 
 	if not user:
-		ip_tracker = get_login_attempt_tracker(frappe.local.request_ip, raise_locked_exception=False)
-		if ip_tracker:
+		if ip_tracker:= get_login_attempt_tracker(frappe.local.request_ip, raise_locked_exception=False):
 			ip_tracker.add_failure_attempt()
 		frappe.throw(_("No user found with this Phone number."), frappe.AuthenticationError)
 
