@@ -7,16 +7,19 @@ import frappe
 from frappe import _
 from frappe.auth import get_login_attempt_tracker
 from frappe.twofactor import get_otpsecret_for_, send_token_via_sms
-from frappe.utils import cint, mask_string
+from frappe.utils import cint
+from frappe.model.utils.mask import mask_field_value
 
 
 def is_mobile_otp_login_enabled() -> bool:
+	"""Return True if login via mobile number and OTP is enabled in system settings."""
 	return cint(frappe.get_system_settings("allow_login_using_mobile_number")) and cint(
 		frappe.get_system_settings("allow_mobile_login_with_otp")
 	)
 
 
 def validate_mobile_otp_prerequisites() -> None:
+	"""Ensure mobile OTP login is enabled and SMS gateway is configured. Raises AuthenticationError if not."""
 	if not is_mobile_otp_login_enabled():
 		frappe.throw(_("Phone OTP login is not enabled."), frappe.AuthenticationError)
 
@@ -28,6 +31,7 @@ def validate_mobile_otp_prerequisites() -> None:
 
 
 def find_user_by_mobile(mobile_no: str) -> dict[str, str]:
+	"""Look up an enabled User by mobile_no. Returns dict with name and mobile_no. Raises on invalid/missing."""
 	if not mobile_no:
 		frappe.throw(_("Phone number is required."), frappe.ValidationError)
 
@@ -45,6 +49,7 @@ def find_user_by_mobile(mobile_no: str) -> dict[str, str]:
 
 
 def generate_mobile_otp(user: str) -> tuple[int, str]:
+	"""Generate a TOTP token for the user. Returns (current_token, otp_secret)."""
 	otp_secret = get_otpsecret_for_(user)
 	token = int(pyotp.TOTP(otp_secret).now())
 
@@ -52,6 +57,7 @@ def generate_mobile_otp(user: str) -> tuple[int, str]:
 
 
 def cache_mobile_otp_data(user: str, token: int, otp_secret: str, tmp_id: str) -> None:
+	"""Store OTP token, user and otp_secret in cache keyed by tmp_id for verification. Uses token_expiry or 300s."""
 	pipeline = frappe.cache.pipeline()
 
 	expiry_time = frappe.flags.token_expiry or 300
@@ -66,6 +72,7 @@ def cache_mobile_otp_data(user: str, token: int, otp_secret: str, tmp_id: str) -
 
 
 def send_mobile_login_otp(user: str, mobile_no: str) -> dict[str, str]:
+	"""Validate settings, generate OTP, cache it, send via SMS (or hook). Returns message, tmp_id, masked mobile_no."""
 	validate_mobile_otp_prerequisites()
 
 	token, otp_secret = generate_mobile_otp(user)
@@ -86,5 +93,5 @@ def send_mobile_login_otp(user: str, mobile_no: str) -> dict[str, str]:
 	return {
 		"message": _("OTP sent successfully"),
 		"tmp_id": tmp_id,
-		"mobile_no": mask_string(mobile_no),
+		"mobile_no": mask_field_value(frappe.get_meta("User").get_field("mobile_no"), mobile_no),
 	}
