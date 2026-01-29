@@ -189,7 +189,7 @@ class SystemSettings(Document):
 		):
 			frappe.throw(
 				_(
-					"Please enable at least one Social Login Key or LDAP or Login With Email Link or Login with Mobile OTP before disabling username/password based login."
+					"Please enable an alternate login method (Social Login Key, LDAP, Login With Email Link, or Login with Mobile OTP) before disabling username/password based login."
 				)
 			)
 
