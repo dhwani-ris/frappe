@@ -6,9 +6,9 @@ import pyotp
 import frappe
 from frappe import _
 from frappe.auth import get_login_attempt_tracker
+from frappe.model.utils.mask import mask_field_value
 from frappe.twofactor import get_otpsecret_for_, send_token_via_sms
 from frappe.utils import cint
-from frappe.model.utils.mask import mask_field_value
 
 
 def is_mobile_otp_login_enabled() -> bool:
@@ -40,7 +40,7 @@ def find_user_by_mobile(mobile_no: str) -> dict[str, str]:
 	)
 
 	if not user:
-		if ip_tracker:= get_login_attempt_tracker(frappe.local.request_ip, raise_locked_exception=False):
+		if ip_tracker := get_login_attempt_tracker(frappe.local.request_ip, raise_locked_exception=False):
 			ip_tracker.add_failure_attempt()
 		frappe.throw(_("No user found with this Phone number."), frappe.AuthenticationError)
 
