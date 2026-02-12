@@ -56,6 +56,11 @@ class DesktopIcon(Document):
 
 	def on_update(self):
 		self.export_desktop_icon()
+		if self.standard:
+			frappe.cache.delete_key("desktop_icons")
+			frappe.cache.delete_key("bootinfo")
+		else:
+			clear_desktop_icons_cache(user=self.owner)
 
 	def after_rename(self, old, new, merge):
 		delete_desktop_icon_file(self.app, old)
@@ -102,10 +107,11 @@ class DesktopIcon(Document):
 
 				if len(items) and all(item["type"] == "Section Break" for item in items):
 					return False
-
+				if len(items) == 0:
+					return False
 				return True
 			except KeyError:
-				return True
+				return False
 
 	def check_app_permission(self):
 		for a in frappe.get_installed_apps():
@@ -205,8 +211,8 @@ def get_desktop_icons(user=None, bootinfo=None):
 				if icon.is_permitted(bootinfo):
 					permitted_icons.append(s)
 
-				if not s.parent_icon:
-					permitted_parent_labels.add(s.label)
+					if not s.parent_icon:
+						permitted_parent_labels.add(s.label)
 
 		user_icons = [
 			s for s in permitted_icons if not s.parent_icon or s.parent_icon in permitted_parent_labels
